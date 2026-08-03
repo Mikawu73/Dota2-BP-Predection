@@ -1,0 +1,2 @@
+"""OpenDota professional match collector."""
+
