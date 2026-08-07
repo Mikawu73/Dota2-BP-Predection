@@ -95,6 +95,9 @@ def main() -> int:
             storage.record_manifest(mid,item.get("start_time"),status,path=path,detail=detail); downloaded+=1
         except APIError as exc:
             status="not_found" if exc.status==404 else "failed"; storage.record_manifest(mid,item.get("start_time"),status,http_status=exc.status,attempts=exc.attempts,error=str(exc)); failed+=1; logging.error("Match %s: %s",mid,exc)
+            if exc.status == 429 and "daily api limit exceeded" in str(exc).lower():
+                logging.error("OpenDota daily API limit exhausted; stopping cleanly for later resume")
+                break
     result=summary(storage,start,end,len(matches),downloaded,skipped,failed,pagination,client.request_count); logging.info("Summary: %s",json.dumps(result,ensure_ascii=False)); print(json.dumps(result,ensure_ascii=False,indent=2)); return 0 if not failed else 2
 
 
