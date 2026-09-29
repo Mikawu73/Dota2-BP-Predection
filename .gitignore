@@ -1,5 +1,7 @@
 .env
 .venv/
+.vscode/
+references/
 __pycache__/
 .pytest_cache/
 *.py[cod]

@@ -5,7 +5,9 @@ from src.validation import validate_normalized_match
 
 
 def fixture_match():
-    return {"match_id":1,"start_time":1_700_000_000,"patch":55,"radiant_win":True,"radiant_team_id":10,"dire_team_id":20,"players":[{"player_slot":i,"isRadiant":True,"account_id":0 if i==0 else i+1,"name":" Pro ","hero_id":i+1,"win":1} for i in range(5)]+[{"player_slot":128+i,"isRadiant":False,"account_id":10+i,"name":None,"hero_id":6+i,"win":0} for i in range(5)],"picks_bans":[{"order":i,"is_pick":True,"hero_id":i+1,"team":0 if i<5 else 1} for i in range(10)]}
+    players = [{"player_slot":i,"isRadiant":True,"account_id":0 if i==0 else i+1,"name":" Pro ","hero_id":i+1,"win":1,"lane_role":1,"is_roaming":False,"gold_per_min":600-i*50,"xp_per_min":700-i*50,"last_hits":300-i*40} for i in range(5)]
+    players += [{"player_slot":128+i,"isRadiant":False,"account_id":10+i,"name":None,"hero_id":6+i,"win":0,"lane_role":3,"is_roaming":i==3,"gold_per_min":550-i*50,"xp_per_min":650-i*50,"last_hits":280-i*40} for i in range(5)]
+    return {"match_id":1,"start_time":1_700_000_000,"patch":55,"radiant_win":True,"radiant_team_id":10,"dire_team_id":20,"players":players,"picks_bans":[{"order":i,"is_pick":True,"hero_id":i+1,"team":0 if i<5 else 1} for i in range(10)]}
 
 
 def test_match_columns_and_utc():
@@ -18,6 +20,8 @@ def test_players_rules_and_columns():
     assert len(rows)==10 and list(rows[0])==PLAYER_COLUMNS
     assert rows[0]["account_id"] is None and rows[0]["professional_name_raw"]=="Pro"
     assert rows[0]["side"]=="radiant" and rows[5]["side"]=="dire"
+    assert rows[0]["lane_role"]==1 and rows[0]["is_roaming"] is False
+    assert rows[0]["gold_per_min"]==600 and rows[0]["xp_per_min"]==700 and rows[0]["last_hits"]==300
 
 
 def test_side_and_win_rules():

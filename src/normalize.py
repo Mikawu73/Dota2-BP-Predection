@@ -12,18 +12,27 @@ from typing import Any, Iterable
 import duckdb
 import pyarrow as pa
 import pyarrow.parquet as pq
+from tqdm import tqdm
 
 from .utils import atomic_write_json
 from .validation import ValidationResult, validate_normalized_match
 
 MATCH_COLUMNS = ["match_id", "start_time", "start_datetime_utc", "patch_id", "radiant_win", "radiant_team_id", "dire_team_id"]
-PLAYER_COLUMNS = ["match_id", "player_slot", "account_id", "professional_name_raw", "side", "hero_id", "win"]
+PLAYER_COLUMNS = [
+    "match_id", "player_slot", "account_id", "professional_name_raw", "side", "hero_id", "win",
+    "lane_role", "is_roaming", "gold_per_min", "xp_per_min", "last_hits",
+]
 DRAFT_COLUMNS = ["match_id", "order", "is_pick", "action_type", "hero_id", "team", "team_side"]
 MANIFEST_COLUMNS = ["source_file", "match_id", "status", "player_count", "draft_action_count", "pick_count", "ban_count", "missing_account_id_count", "missing_hero_id_count", "unknown_player_side_count", "unknown_draft_team_count", "duplicate_player_slot_count", "duplicate_draft_order_count", "draft_picks_match_players", "warning_count", "error_count", "warning_messages", "error_messages", "normalized_at_utc"]
 
 SCHEMAS = {
     "matches": pa.schema([("match_id", pa.int64()), ("start_time", pa.int64()), ("start_datetime_utc", pa.timestamp("us", tz="UTC")), ("patch_id", pa.int64()), ("radiant_win", pa.bool_()), ("radiant_team_id", pa.int64()), ("dire_team_id", pa.int64())]),
-    "match_players": pa.schema([("match_id", pa.int64()), ("player_slot", pa.int64()), ("account_id", pa.int64()), ("professional_name_raw", pa.string()), ("side", pa.string()), ("hero_id", pa.int64()), ("win", pa.int64())]),
+    "match_players": pa.schema([
+        ("match_id", pa.int64()), ("player_slot", pa.int64()), ("account_id", pa.int64()),
+        ("professional_name_raw", pa.string()), ("side", pa.string()), ("hero_id", pa.int64()),
+        ("win", pa.int64()), ("lane_role", pa.int64()), ("is_roaming", pa.bool_()),
+        ("gold_per_min", pa.int64()), ("xp_per_min", pa.int64()), ("last_hits", pa.int64()),
+    ]),
     "draft_actions": pa.schema([("match_id", pa.int64()), ("order", pa.int64()), ("is_pick", pa.bool_()), ("action_type", pa.string()), ("hero_id", pa.int64()), ("team", pa.int64()), ("team_side", pa.string())]),
     "normalization_manifest": pa.schema([(name, pa.int64() if name in {"match_id", "player_count", "draft_action_count", "pick_count", "ban_count", "missing_account_id_count", "missing_hero_id_count", "unknown_player_side_count", "unknown_draft_team_count", "duplicate_player_slot_count", "duplicate_draft_order_count", "warning_count", "error_count"} else pa.bool_() if name == "draft_picks_match_players" else pa.timestamp("us", tz="UTC") if name == "normalized_at_utc" else pa.string()) for name in MANIFEST_COLUMNS]),
 }
@@ -98,6 +107,11 @@ def normalize_players(raw_match: dict[str, Any]) -> list[dict[str, Any]]:
             "professional_name_raw": name.strip() if isinstance(name, str) else None,
             "side": side, "hero_id": nullable_int(raw.get("hero_id"), positive=True),
             "win": derive_player_win(side, match["radiant_win"]),
+            "lane_role": nullable_int(raw.get("lane_role"), positive=True),
+            "is_roaming": nullable_bool(raw.get("is_roaming")),
+            "gold_per_min": nullable_int(raw.get("gold_per_min")),
+            "xp_per_min": nullable_int(raw.get("xp_per_min")),
+            "last_hits": nullable_int(raw.get("last_hits")),
         })
     return rows
 
@@ -198,7 +212,7 @@ def run_normalization(input_dir: Path, output_dir: Path, database: Path, *, limi
     if limit is not None:
         files = files[:limit]
     matches: list[dict[str, Any]] = []; players: list[dict[str, Any]] = []; drafts: list[dict[str, Any]] = []; manifests: list[dict[str, Any]] = []
-    for path in files:
+    for path in tqdm(files, desc="normalize", unit="match"):
         before = path.read_bytes()
         try:
             raw = json.loads(before.decode("utf-8"))
@@ -223,8 +237,22 @@ def run_normalization(input_dir: Path, output_dir: Path, database: Path, *, limi
         for name, table in tables.items(): _write_parquet_atomic(table, output_dir / f"{name}.parquet")
     if write_database: _write_database(database, tables)
     counts = Counter(row["status"] for row in manifests)
-    per_players = Counter(p["match_id"] for p in players); per_sides = {mid: Counter(p["side"] for p in players if p["match_id"] == mid) for mid in per_players}; per_drafts = Counter(a["match_id"] for a in drafts); per_picks = Counter(a["match_id"] for a in drafts if a["is_pick"] is True)
-    valid_orders = {mid for mid in per_drafts if sorted(a["order"] for a in drafts if a["match_id"] == mid and a["order"] is not None) == list(range(per_drafts[mid]))}
+    per_players = Counter(p["match_id"] for p in players)
+    per_sides: dict[int, Counter[str]] = {}
+    for player in players:
+        per_sides.setdefault(player["match_id"], Counter())[player["side"]] += 1
+
+    per_drafts = Counter(a["match_id"] for a in drafts)
+    per_picks = Counter(a["match_id"] for a in drafts if a["is_pick"] is True)
+    orders_by_match: dict[int, list[int]] = {}
+    for action in drafts:
+        if action["order"] is not None:
+            orders_by_match.setdefault(action["match_id"], []).append(action["order"])
+    valid_orders = {
+        mid
+        for mid, count in per_drafts.items()
+        if sorted(orders_by_match.get(mid, [])) == list(range(count))
+    }
     comparable = [m for m in manifests if m["draft_picks_match_players"] is not None]
     summary = {
         "generated_at_utc": datetime.now(UTC).isoformat(), "input_directory": str(input_dir.resolve()), "files_discovered": len(files),
@@ -234,6 +262,9 @@ def run_normalization(input_dir: Path, output_dir: Path, database: Path, *, limi
         "matches_with_24_draft_actions": sum(v == 24 for v in per_drafts.values()), "matches_with_10_picks": sum(v == 10 for v in per_picks.values()),
         "matches_with_valid_draft_order": len(valid_orders), "matches_where_draft_matches_players": sum(m["draft_picks_match_players"] is True for m in comparable),
         "missing_account_ids": sum(p["account_id"] is None for p in players), "missing_player_hero_ids": sum(p["hero_id"] is None for p in players), "missing_draft_hero_ids": sum(a["hero_id"] is None for a in drafts),
+        "missing_lane_roles": sum(p["lane_role"] is None for p in players), "missing_is_roaming": sum(p["is_roaming"] is None for p in players),
+        "missing_gold_per_min": sum(p["gold_per_min"] is None for p in players), "missing_xp_per_min": sum(p["xp_per_min"] is None for p in players),
+        "missing_last_hits": sum(p["last_hits"] is None for p in players),
         "unknown_player_sides": sum(p["side"] == "unknown" for p in players), "unknown_draft_teams": sum(a["team_side"] == "unknown" for a in drafts),
         "duplicate_player_slots": sum(m["duplicate_player_slot_count"] for m in manifests), "duplicate_draft_orders": sum(m["duplicate_draft_order_count"] for m in manifests),
         "confirmed_team_mapping": "0=radiant,1=dire" if comparable and all(m["draft_picks_match_players"] is True for m in comparable) else "unconfirmed",
