@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dota 2 | Draft Lab</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/lucide.min.js"></script>
+  <script defer src="/team-picker.js"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="/" class="brand" aria-label="Draft Lab homepage"><i data-lucide="swords"></i><div><strong>DOTA 2</strong><span>Draft Lab</span></div></a>
+    <div class="model-badge"><span class="status-dot"></span><span id="model-name">Loading model</span></div>
+    <a href="/" class="home-link"><i data-lucide="arrow-left"></i>Overview</a>
+  </header>
+  <main>
+    <div class="heading-row"><div><p class="eyebrow">PROFESSIONAL DOTA / NEXT-ACTION PREDICTION</p><h1>Draft sandbox</h1></div><span class="tag">Local research demo</span></div>
+    <section class="context-row" aria-label="Match context">
+      <label>Patch ID<input id="patch" type="number" min="1" step="1" value="59"></label>
+      <label class="team-field"><span class="radiant-text">Radiant team</span><input id="radiant-team" type="search" list="team-options" autocomplete="off" placeholder="Team name or ID" aria-describedby="radiant-team-status"><span id="radiant-team-status" class="team-status">Unknown team</span></label>
+      <label class="team-field"><span class="dire-text">Dire team</span><input id="dire-team" type="search" list="team-options" autocomplete="off" placeholder="Team name or ID" aria-describedby="dire-team-status"><span id="dire-team-status" class="team-status">Unknown team</span></label>
+      <datalist id="team-options"></datalist>
+      <div class="context-actions">
+        <button id="example" class="text-button" disabled><i data-lucide="flask-conical"></i>Example</button>
+        <button id="import" class="icon-button" title="Import draft JSON" aria-label="Import draft JSON"><i data-lucide="upload"></i></button>
+        <input id="import-file" type="file" accept=".json,application/json" hidden>
+        <button id="export" class="icon-button" title="Export draft JSON" aria-label="Export draft JSON"><i data-lucide="download"></i></button>
+      </div>
+    </section>
+    <div id="error" class="error" role="alert" hidden></div>
+    <div class="workspace">
+      <div class="draft-column">
+        <section class="lineups" aria-label="Picked heroes">
+          <div class="lineup radiant"><div class="section-label"><h2>Radiant</h2><span id="radiant-count">0 / 5</span></div><div id="radiant-picks" class="pick-slots"></div></div>
+          <div class="lineup dire"><div class="section-label"><h2>Dire</h2><span id="dire-count">0 / 5</span></div><div id="dire-picks" class="pick-slots"></div></div>
+        </section>
+        <section class="history-section" aria-label="Draft history">
+          <div class="section-label"><h2>BP history <span id="history-count" class="muted">0 / 24</span></h2><div class="tools">
+            <button id="undo" class="icon-button" title="Undo" aria-label="Undo" disabled><i data-lucide="undo-2"></i></button>
+            <button id="redo" class="icon-button" title="Redo" aria-label="Redo" disabled><i data-lucide="redo-2"></i></button>
+            <button id="reset" class="icon-button" title="Clear draft" aria-label="Clear draft" disabled><i data-lucide="rotate-ccw"></i></button>
+          </div></div>
+          <div id="history" class="history-strip"><span class="empty-history">No actions recorded</span></div>
+        </section>
+        <section class="hero-section" aria-label="Hero pool">
+          <div class="section-label hero-toolbar"><h2>Hero pool <span id="hero-count" class="muted"></span></h2>
+            <div class="search"><i data-lucide="search"></i><input id="search" type="search" placeholder="Search heroes" aria-label="Search heroes"></div>
+            <label class="checkbox-label"><input id="available-only" type="checkbox" checked>Available</label>
+          </div>
+          <div id="hero-grid" class="hero-grid" aria-live="polite"><p class="muted">Loading heroes...</p></div>
+        </section>
+      </div>
+      <aside class="prediction-column" aria-label="Next action prediction">
+        <section class="next-action">
+          <div class="section-label"><h2>Next action</h2><span id="action-number" class="tag">01 / 24</span></div>
+          <fieldset><legend>Acting side</legend><div class="segmented side-segment">
+            <label><input type="radio" name="side" value="radiant" checked><span>Radiant</span></label>
+            <label><input type="radio" name="side" value="dire"><span>Dire</span></label>
+          </div></fieldset>
+          <fieldset><legend>Action type</legend><div class="segmented">
+            <label><input type="radio" name="action" value="ban" checked><span><i data-lucide="ban"></i>Ban</span></label>
+            <label><input type="radio" name="action" value="pick"><span><i data-lucide="check"></i>Pick</span></label>
+          </div></fieldset>
+        </section>
+        <section class="rankings-section">
+          <div class="section-label"><h2>Top 5 predictions</h2><button id="retry" class="icon-button" title="Refresh predictions" aria-label="Refresh predictions"><i data-lucide="refresh-cw"></i></button></div>
+          <p class="score-label">Next-action probability <span>Not win rate</span></p>
+          <div id="predictions" class="predictions" aria-live="polite" aria-busy="true"></div>
+          <p id="prediction-status" class="prediction-status" role="status">Connecting to model...</p>
+        </section>
+        <details class="model-details"><summary>Model context <span id="warning-count"></span></summary><ul id="warnings"></ul><dl><dt>Checkpoint</dt><dd id="checkpoint">-</dd><dt>Training patches</dt><dd id="training-patches">-</dd><dt>Scores</dt><dd>Uncalibrated softmax</dd></dl></details>
+      </aside>
+    </div>
+    <footer><span>Behavior prediction, not optimal drafting.</span><span>Hero metadata: OpenDota / Artwork: Valve</span></footer>
+  </main>
+</body>
+</html>

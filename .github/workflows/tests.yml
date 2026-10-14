@@ -1,0 +1,40 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install -e .
+      - run: python -m pytest -q
+      - run: python -m scripts.train_draft_mlp --help
+      - run: python -m scripts.train_draft_value --help
+      - run: python -m scripts.predict_draft --help
+      - run: python -m scripts.serve_demo --help
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check src/web/app.js
+      - run: node --check src/web/overview.js
+      - run: node --test tests/team_picker.test.cjs
+      - run: node --test tests/report_data.test.cjs

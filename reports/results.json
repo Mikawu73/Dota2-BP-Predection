@@ -1,0 +1,526 @@
+{
+  "schema_version": 1,
+  "evaluation_split": "validation",
+  "provenance_note": "Source paths are relative to data/processed. Hashes identify summary files, not training datasets. Matching counts do not prove identical data.",
+  "comparison_note": "Historical statistical baseline and old model_comparison.json are excluded: their data snapshot predates this cohort. Seed 42 original B+ did not record physical batch size; later runs used 512 x 4 accumulation. These are exploratory comparisons, not a fully controlled multi-seed benchmark.",
+  "dataset": {
+    "sources": [
+      {
+        "path": "profile/dataset_profile.json",
+        "sha256": "b7d2f6f5533ff6d5a77a6d436b6d65c32e7494a3e578225b55503b598f17b469"
+      },
+      {
+        "path": "model/dataset_splits_summary.json",
+        "sha256": "d11e62cec3ad8a736adac5d01566190cdfc561a0d52f21d24c760801632bfda5"
+      },
+      {
+        "path": "model/draft_samples_summary.json",
+        "sha256": "13ce548f77bc47383cbf2da2ca9f2827d29614c2cf17708930cdc4b17edc3587"
+      }
+    ],
+    "raw_matches": 26852,
+    "eligible_matches": 25158,
+    "excluded_matches": 1694,
+    "earliest_match_utc": "2025-08-07T05:38:55+00:00",
+    "latest_match_utc": "2026-08-23T12:08:38+00:00",
+    "match_splits": {
+      "train": {
+        "matches": 17610,
+        "earliest_start_time": 1754545135,
+        "latest_start_time": 1773742479
+      },
+      "validation": {
+        "matches": 3774,
+        "earliest_start_time": 1773742532,
+        "latest_start_time": 1777905686
+      },
+      "test": {
+        "matches": 3774,
+        "earliest_start_time": 1777906970,
+        "latest_start_time": 1787486918
+      }
+    },
+    "samples": 603640,
+    "sample_splits": {
+      "train": 422532,
+      "validation": 90549,
+      "test": 90559
+    }
+  },
+  "runs": [
+    {
+      "run": "decay_current_none",
+      "source": {
+        "path": "neural/decay_current_none/model_b_training_summary.json",
+        "sha256": "6bfa04a1a6ec8d568f17e4a3d55d53cec922920ab85f402272306b62388085ef"
+      },
+      "generated_at_utc": "2026-08-23T21:43:34.604817+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": null,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 14,
+      "best_validation_metrics": {
+        "loss": 4.046506361110421,
+        "top1_accuracy": 0.11657776452528465,
+        "top3_accuracy": 0.22988658074633625,
+        "top5_accuracy": 0.30506134799942575,
+        "mrr": 0.21941419327036177
+      }
+    },
+    {
+      "run": "decay_current_60",
+      "source": {
+        "path": "neural/decay_current_60/model_b_training_summary.json",
+        "sha256": "cf4e860a5eeb80c5135ff55be59463cf2221e0c19b4eef09b5759721899ea442"
+      },
+      "generated_at_utc": "2026-08-23T22:08:15.518185+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 23,
+      "best_validation_metrics": {
+        "loss": 4.151861021628742,
+        "top1_accuracy": 0.12311566113375079,
+        "top3_accuracy": 0.23932898209809053,
+        "top5_accuracy": 0.3159283923621465,
+        "mrr": 0.22710082877719565
+      }
+    },
+    {
+      "run": "decay_current_120",
+      "source": {
+        "path": "neural/decay_current_120/model_b_training_summary.json",
+        "sha256": "2713a4f9f70368003268626de1dbfb515da662a929c71d737f135f827c936790"
+      },
+      "generated_at_utc": "2026-08-23T22:41:30.609528+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 120.0,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 23,
+      "best_validation_metrics": {
+        "loss": 4.086531178097029,
+        "top1_accuracy": 0.12269599885145059,
+        "top3_accuracy": 0.2377497266673293,
+        "top5_accuracy": 0.31447061811836685,
+        "mrr": 0.22638578222916167
+      }
+    },
+    {
+      "run": "decay_current_240",
+      "source": {
+        "path": "neural/decay_current_240/model_b_training_summary.json",
+        "sha256": "5a5997a7d809ad1d6a2124ebfc342a587f9b9fb843d7cb8a6a79e84e8ca441f3"
+      },
+      "generated_at_utc": "2026-08-23T23:19:57.414091+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 240.0,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 23,
+      "best_validation_metrics": {
+        "loss": 4.085182228952435,
+        "top1_accuracy": 0.12106152469933407,
+        "top3_accuracy": 0.23369667251985113,
+        "top5_accuracy": 0.3089818772156512,
+        "mrr": 0.22348926632111718
+      }
+    },
+    {
+      "run": "model_b_plus_recency60_seed7",
+      "source": {
+        "path": "neural/model_b_plus_recency60_seed7/model_b_training_summary.json",
+        "sha256": "588c645f6f18ba70528a890709e154d635700898d06b1f40a8cf2c29cd8a2108"
+      },
+      "generated_at_utc": "2026-08-29T20:40:15.799681+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder",
+      "seed": 7,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "sequence_encoder": false,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 21,
+      "best_validation_metrics": {
+        "loss": 4.116560038183314,
+        "top1_accuracy": 0.12028846260036002,
+        "top3_accuracy": 0.23181923599377133,
+        "top5_accuracy": 0.3073363593192636,
+        "mrr": 0.22236496850649567
+      }
+    },
+    {
+      "run": "model_b_plus_recency60_seed2026",
+      "source": {
+        "path": "neural/model_b_plus_recency60_seed2026/model_b_training_summary.json",
+        "sha256": "d876c3a022d43ce4ad57be9f17a808b0fa8072b23ee1a613ea412537f855a450"
+      },
+      "generated_at_utc": "2026-08-29T21:33:20.472502+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder",
+      "seed": 2026,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "sequence_encoder": false,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 17,
+      "best_validation_metrics": {
+        "loss": 4.065669472370882,
+        "top1_accuracy": 0.12194502424101868,
+        "top3_accuracy": 0.2363913461219892,
+        "top5_accuracy": 0.3139073871605429,
+        "mrr": 0.22572618198086183
+      }
+    },
+    {
+      "run": "model_b_plus_recency60_sequence",
+      "source": {
+        "path": "neural/model_b_plus_recency60_sequence/model_b_training_summary.json",
+        "sha256": "81a15dd0b4344f1b5c893e8e55e124723c8e2208f8285cd1df96b83e75627f99"
+      },
+      "generated_at_utc": "2026-08-29T19:43:47.809984+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder + ordered BP Transformer encoder",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "sequence_encoder": true,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 14,
+      "best_validation_metrics": {
+        "loss": 4.075563087248945,
+        "top1_accuracy": 0.12129344332902628,
+        "top3_accuracy": 0.2361815149808391,
+        "top5_accuracy": 0.3117207257948735,
+        "mrr": 0.2248805181240435
+      }
+    },
+    {
+      "run": "model_b_plus_recency60_sequence_seed7",
+      "source": {
+        "path": "neural/model_b_plus_recency60_sequence_seed7/model_b_training_summary.json",
+        "sha256": "6880ac60cc4a18450a5e427a70f550ef6a0c438da4e2165075c20f5cf371032f"
+      },
+      "generated_at_utc": "2026-08-29T21:24:01.846762+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder + ordered BP Transformer encoder",
+      "seed": 7,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "sequence_encoder": true,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 19,
+      "best_validation_metrics": {
+        "loss": 4.080929021769291,
+        "top1_accuracy": 0.12206650542800031,
+        "top3_accuracy": 0.2377718141558714,
+        "top5_accuracy": 0.3137196435079349,
+        "mrr": 0.22568703500302614
+      }
+    },
+    {
+      "run": "model_b_plus_recency60_sequence_seed2026",
+      "source": {
+        "path": "neural/model_b_plus_recency60_sequence_seed2026/model_b_training_summary.json",
+        "sha256": "52ac9076626d41ee1f4e98f0c52c11beba73c3b04b9ddd207bf0ef3ca4ea0353"
+      },
+      "generated_at_utc": "2026-08-29T22:01:54.541808+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder + ordered BP Transformer encoder",
+      "seed": 2026,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "sequence_encoder": true,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "best_epoch": 17,
+      "best_validation_metrics": {
+        "loss": 4.064860642129451,
+        "top1_accuracy": 0.12167997437851329,
+        "top3_accuracy": 0.23582811516416527,
+        "top5_accuracy": 0.3123391754740527,
+        "mrr": 0.22478950838443437
+      }
+    },
+    {
+      "run": "model_b_plus_recency60_sequence_multitask",
+      "source": {
+        "path": "neural/model_b_plus_recency60_sequence_multitask/model_b_training_summary.json",
+        "sha256": "3ae62e314dacce27d494f8fb2a808fa1173ee37c3db74c4c31837717e789964c"
+      },
+      "generated_at_utc": "2026-08-30T14:02:25.077646+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder + ordered BP Transformer encoder + acting-side win auxiliary task",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "sequence_encoder": true,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "outcome_auxiliary": true,
+      "outcome_loss_weight": 0.2,
+      "best_epoch": 19,
+      "best_validation_metrics": {
+        "loss": 4.095734437627952,
+        "top1_accuracy": 0.12088482479099714,
+        "top3_accuracy": 0.23664535224022354,
+        "top5_accuracy": 0.31208516935581837,
+        "mrr": 0.22489282821013065,
+        "outcome_loss": 0.6901066434878534,
+        "outcome_accuracy": 0.5248981214590995
+      }
+    },
+    {
+      "run": "model_b_plus_recency60_sequence_role_multitask",
+      "source": {
+        "path": "neural/model_b_plus_recency60_sequence_role_multitask/model_b_training_summary.json",
+        "sha256": "092a0a260f3dc9f4cd9ab34b9518ab167327d48387516cfa320e83ee97a4bd29"
+      },
+      "generated_at_utc": "2026-08-30T15:32:17.112430+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder + ordered BP Transformer encoder + picked-hero position auxiliary task",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "sequence_encoder": true,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "outcome_auxiliary": false,
+      "outcome_loss_weight": null,
+      "role_auxiliary": true,
+      "role_loss_weight": 0.2,
+      "best_epoch": 13,
+      "best_validation_metrics": {
+        "loss": 4.062422274526861,
+        "top1_accuracy": 0.12197815547383185,
+        "top3_accuracy": 0.23622568995792334,
+        "top5_accuracy": 0.31335519994699,
+        "mrr": 0.22576868748812043,
+        "role_loss": 1.172768623663372,
+        "role_accuracy": 0.5202702702702703,
+        "role_samples": 37740
+      }
+    },
+    {
+      "run": "model_b_plus_outcome_weighted",
+      "source": {
+        "path": "neural/model_b_plus_outcome_weighted/model_b_training_summary.json",
+        "sha256": "750cdb0d11e04a94af5ef90d1e7327a6fc9930258e4494a8372f90825f5505d9"
+      },
+      "generated_at_utc": "2026-08-30T16:31:15.073133+00:00",
+      "model": "Model B: Model A + acting/opponent team embeddings + DeepSets lineup encoder + outcome-weighted pick loss",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 422532,
+      "validation_samples": 90549,
+      "training_patches": [
+        58,
+        59
+      ],
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "initial_learning_rate": 0.001,
+      "scheduler_patience": 2,
+      "early_stopping_patience": 5,
+      "recency_half_life_days": 60.0,
+      "sequence_encoder": false,
+      "lineup_encoder": true,
+      "lineup_attention": false,
+      "role_coverage": false,
+      "outcome_auxiliary": false,
+      "outcome_loss_weight": null,
+      "role_auxiliary": false,
+      "role_loss_weight": null,
+      "outcome_weighted_pick_loss": true,
+      "winning_pick_weight": 1.5,
+      "losing_pick_weight": 0.5,
+      "best_epoch": 19,
+      "best_validation_metrics": {
+        "loss": 4.136637604363384,
+        "top1_accuracy": 0.12223216159206618,
+        "top3_accuracy": 0.2363913461219892,
+        "top5_accuracy": 0.3116544633292471,
+        "mrr": 0.2251270408652699,
+        "pick_top5_accuracy": 0.2658982511923688,
+        "pick_samples": 37740,
+        "ban_top5_accuracy": 0.34435418205230167,
+        "ban_samples": 52809,
+        "winning_pick_top5_accuracy": 0.26444091149973503,
+        "winning_pick_samples": 18870,
+        "losing_pick_top5_accuracy": 0.26735559088500266,
+        "losing_pick_samples": 18870
+      }
+    },
+    {
+      "run": "draft_value",
+      "source": {
+        "path": "neural/draft_value/draft_value_training_summary.json",
+        "sha256": "56e75721c3dbdd7a20f86c3afae09dfa34f6e7b922a634a81160c8880345a6d9"
+      },
+      "generated_at_utc": "2026-08-30T20:43:56.221426+00:00",
+      "model": "Factual Pick value model: B+ context + candidate hero -> acting-side win probability",
+      "seed": 42,
+      "device": "cpu",
+      "train_samples": 176100,
+      "validation_samples": 37740,
+      "batch_size": 512,
+      "accumulation_steps": 4,
+      "effective_batch_size": 2048,
+      "recency_half_life_days": 60.0,
+      "best_epoch": 1,
+      "best_validation_metrics": {
+        "log_loss": 0.6915127954851968,
+        "accuracy": 0.5460519342872284,
+        "auc": 0.5664414695252626,
+        "brier_score": 0.24859593608231537,
+        "samples": 37740,
+        "positive_rate": 0.5
+      },
+      "validation_constant_baseline": {
+        "prediction": 0.5,
+        "auc": 0.5,
+        "log_loss": 0.6931471805599453,
+        "brier_score": 0.25
+      }
+    }
+  ]
+}

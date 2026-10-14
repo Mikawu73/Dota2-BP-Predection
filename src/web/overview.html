@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Professional Dota 2 draft prediction: dataset statistics, chronological evaluation and recorded machine learning experiments.">
+  <title>Dota 2 Draft Prediction | Research Overview</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/overview.css">
+  <script defer src="/lucide.min.js"></script>
+  <script defer src="/report-data.js"></script>
+  <script defer src="/overview.js"></script>
+</head>
+<body class="overview">
+  <header class="topbar">
+    <a href="/" class="brand" aria-label="Draft Lab homepage"><i data-lucide="swords"></i><div><strong>DOTA 2</strong><span>Draft Lab</span></div></a>
+    <nav aria-label="Primary navigation"><a href="/" aria-current="page">Overview</a><a href="/sandbox">Draft sandbox<i data-lucide="arrow-up-right"></i></a></nav>
+  </header>
+  <main>
+    <section class="overview-heading">
+      <div><p class="eyebrow">DATA / MODELS / EVALUATION</p><h1>Dota 2 Draft Prediction</h1><p class="intro">Learning the next pick or ban from professional match drafts.</p></div>
+      <a class="sandbox-link" href="/sandbox"><i data-lucide="swords"></i>Open draft sandbox<i data-lucide="arrow-up-right"></i></a>
+    </section>
+    <div class="snapshot-row"><span><i data-lucide="database"></i><span id="snapshot">Loading recorded dataset...</span></span><span class="validation-tag">Validation results / Research snapshot</span></div>
+    <div id="report-error" class="error" role="alert" hidden><span id="report-error-message"></span><button id="reload-report" class="icon-button" title="Retry loading report" aria-label="Retry loading report"><i data-lucide="refresh-cw"></i></button></div>
+    <div id="loading-report" class="loading-report" role="status">Loading dataset and experiment summaries...</div>
+    <div id="report-content" hidden>
+      <section class="metric-strip" aria-label="Project statistics">
+        <div><span class="metric-label">Eligible matches</span><strong id="stat-matches">-</strong><span id="stat-filtered" class="metric-note"></span></div>
+        <div><span class="metric-label">Draft actions</span><strong id="stat-actions">-</strong><span class="metric-note">One target hero per action</span></div>
+        <div class="featured-metric"><span class="metric-label">B+ validation Top-5</span><strong id="stat-top5">-</strong><span class="metric-note">Seed 42 / selected checkpoint</span></div>
+        <div><span class="metric-label">Recorded experiments</span><strong id="stat-runs">-</strong><span id="stat-run-types" class="metric-note"></span></div>
+      </section>
+      <div class="result-boundary"><i data-lucide="info"></i><p>Top-5 measures whether the actual next hero appears in the five predictions. It is <strong>not match win rate</strong>, and these are not final test results.</p></div>
+
+      <div class="overview-grid">
+        <section class="overview-section" aria-labelledby="dataset-heading">
+          <div class="section-heading"><div><p class="section-index">01 / DATASET</p><h2 id="dataset-heading">Chronological, match-level splits</h2></div><span class="tag">70 / 15 / 15</span></div>
+          <div class="dataset-quality"><div><strong id="normalized-count"></strong><span>normalized matches</span></div><i data-lucide="arrow-right"></i><div><strong id="eligible-count"></strong><span>eligible matches</span></div><span id="excluded-count" class="excluded-count"></span></div>
+          <figure class="split-figure"><svg id="split-chart" viewBox="0 0 600 36" role="img" aria-label="Match counts by chronological split"></svg><figcaption>Time advances from training to validation to test. Splits never share a match.</figcaption></figure>
+          <div class="table-scroll"><table class="split-table"><thead><tr><th>Split / UTC range</th><th>Matches</th><th>Actions</th></tr></thead><tbody id="split-rows"></tbody></table></div>
+          <p class="section-note">Training patches: <strong id="training-patches"></strong>. Patch 60 is unseen during training. Validation uses the actual preceding BP history.</p>
+        </section>
+
+        <section class="overview-section" aria-labelledby="decay-heading">
+          <div class="section-heading"><div><p class="section-index">02 / RECENCY EXPERIMENT</p><h2 id="decay-heading">Training data half-life</h2></div><span class="tag">Seed 42</span></div>
+          <fieldset class="chart-modes"><legend class="sr-only">Recency chart metric</legend><div class="segmented">
+            <label><input type="radio" name="chart-metric" value="top5_accuracy" checked><span>Top-5</span></label>
+            <label><input type="radio" name="chart-metric" value="mrr"><span>MRR</span></label>
+          </div></fieldset>
+          <div id="decay-bars" class="decay-bars" aria-live="polite"></div>
+          <div class="chart-scale"><span>0</span><span id="chart-scale-max">40%</span></div>
+          <div class="decay-summary"><span class="dot train"></span><p><strong>60-day decay</strong> is the current B+ candidate. The half-life is anchored to the latest training match, not today's date.</p></div>
+          <p class="section-note">Historical comparisons, not a controlled causal estimate. MRR is the mean reciprocal rank of the actual next hero; higher is better.</p>
+        </section>
+      </div>
+
+      <section class="architecture-section" aria-labelledby="architecture-heading">
+        <div class="section-heading"><div><p class="section-index">03 / BEHAVIOR MODEL</p><h2 id="architecture-heading">B+: context + lineup representation</h2></div><span class="tag">DeepSets + MLP</span></div>
+        <ol class="architecture-flow">
+          <li><i data-lucide="history"></i><div><strong>Draft state</strong><span>Prior picks and bans<br>Four hero-presence groups</span></div></li>
+          <li><i data-lucide="layers"></i><div><strong>Context &amp; lineups</strong><span>Team, patch, side, order<br>DeepSets for both lineups</span></div></li>
+          <li><i data-lucide="network"></i><div><strong>MLP scoring</strong><span>Shared learned representation<br>One score per candidate hero</span></div></li>
+          <li><i data-lucide="list-ordered"></i><div><strong>Next-action ranking</strong><span>Used heroes masked<br>Available heroes ranked</span></div></li>
+        </ol>
+      </section>
+
+      <section class="experiments-section" aria-labelledby="experiments-heading">
+        <div class="section-heading"><div><p class="section-index">04 / EXPERIMENT REGISTER</p><h2 id="experiments-heading">What changed, and what happened</h2></div><button id="download-report" class="text-button"><i data-lucide="download"></i>Results JSON</button></div>
+        <p id="comparison-note" class="comparison-note"></p>
+        <div class="experiment-controls">
+          <label>Experiment family<select id="experiment-filter"><option value="all">All behavior models</option><option value="recency">Recency decay</option><option value="baseline">B+ repeat seeds</option><option value="sequence">Sequence Transformer</option><option value="auxiliary">Auxiliary tasks</option><option value="weighted">Outcome-weighted picks</option></select></label>
+          <label>Sort by<select id="experiment-sort"><option value="top5_accuracy">Top-5: high to low</option><option value="mrr">MRR: high to low</option><option value="name">Model name</option></select></label>
+          <label class="experiment-search">Search<input id="experiment-query" type="search" placeholder="Model, run ID or seed" aria-label="Search experiments"></label>
+          <span id="experiment-count" role="status"></span>
+        </div>
+        <div class="table-scroll"><table class="experiment-table"><caption class="sr-only">Recorded behavior-model validation metrics</caption><thead><tr><th>Experiment</th><th>Seed</th><th>Epoch</th><th>Top-1</th><th>Top-5</th><th>MRR</th><th><span class="sr-only">Details</span></th></tr></thead><tbody id="experiment-rows"></tbody></table></div>
+      </section>
+
+      <div class="overview-grid secondary-grid">
+        <section class="overview-section" aria-labelledby="seeds-heading">
+          <div class="section-heading"><div><p class="section-index">05 / REPEATABILITY</p><h2 id="seeds-heading">B+ versus sequence encoding</h2></div><span class="tag">Validation Top-5</span></div>
+          <div class="table-scroll"><table class="seed-table"><thead><tr><th>Seed</th><th>B+</th><th>B+ + sequence</th></tr></thead><tbody id="seed-rows"></tbody><tfoot id="seed-means"></tfoot></table></div>
+          <p class="section-note">Same recorded seeds, but physical batch and accumulation settings are not fully controlled. These are descriptive comparisons, not evidence of a statistically reliable gain.</p>
+        </section>
+        <section class="overview-section" aria-labelledby="value-heading">
+          <div class="section-heading"><div><p class="section-index">06 / SEPARATE TASK</p><h2 id="value-heading">Experimental outcome model</h2></div><span class="tag">Factual picks only</span></div>
+          <div id="value-metrics" class="value-metrics"></div>
+          <p id="value-epoch" class="value-epoch"></p>
+          <p class="section-note">Predicts observed match outcomes. Validation loss worsened after epoch 1. This does not show that choosing a different hero would increase win probability.</p>
+        </section>
+      </div>
+
+      <section class="limitations-section" aria-labelledby="limits-heading">
+        <div><p class="section-index">07 / READING THE EVIDENCE</p><h2 id="limits-heading">What these results do not establish</h2></div>
+        <ul><li>Validation was reused for model selection; no final neural test score is reported here.</li><li>Historical statistical test results were already exposed. Test data is not described as never inspected.</li><li>Actions from the same match are correlated. Uncertainty estimates should resample matches.</li><li>Behavior prediction is not optimal drafting. The independent value model remains exploratory.</li></ul>
+        <details><summary>Report provenance</summary><p id="provenance-note"></p><ul id="report-sources"></ul></details>
+      </section>
+    </div>
+    <footer><span>Professional Dota 2 / OpenDota match data</span><a href="/sandbox">Draft sandbox <i data-lucide="arrow-up-right"></i></a></footer>
+  </main>
+  <dialog id="run-dialog" aria-labelledby="run-dialog-title"><div class="dialog-heading"><h2 id="run-dialog-title"></h2><button id="close-run" class="icon-button" title="Close experiment details" aria-label="Close experiment details"><i data-lucide="x"></i></button></div><div id="run-dialog-content"></div></dialog>
+</body>
+</html>

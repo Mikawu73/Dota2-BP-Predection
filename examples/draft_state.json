@@ -1,0 +1,12 @@
+{
+  "patch_id": 59,
+  "radiant_team_id": null,
+  "dire_team_id": null,
+  "acting_side": "radiant",
+  "is_pick": true,
+  "history": [
+    {"hero_id": 1, "side": "radiant", "is_pick": false},
+    {"hero_id": 2, "side": "dire", "is_pick": false}
+  ],
+  "top_k": 5
+}

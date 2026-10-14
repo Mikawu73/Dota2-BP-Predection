@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dota2-draft-prediction"
+version = "0.1.0"
+description = "Chronological evaluation of professional Dota 2 draft prediction models"
+readme = "README.md"
+requires-python = ">=3.11"
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["src", "src.*", "scripts", "scripts.*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+src = ["web/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

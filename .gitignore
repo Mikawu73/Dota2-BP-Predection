@@ -3,6 +3,9 @@
 .vscode/
 references/
 __pycache__/
+*.egg-info/
+build/
+dist/
 .pytest_cache/
 *.py[cod]
 logs/*.log
