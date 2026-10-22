@@ -161,7 +161,8 @@ async function loadReport() {
   $("loading-report").hidden = false;
   $("report-content").hidden = true;
   try {
-    const response = await fetch("/api/report", {signal: AbortSignal.timeout(15000)});
+    const reportUrl = document.body.dataset.reportUrl || "/api/report";
+    const response = await fetch(reportUrl, {signal: AbortSignal.timeout(15000)});
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Report unavailable");
     report = DraftReport.validate(data);

@@ -126,6 +126,32 @@ It requires only the checkpoint and the input state, not the raw data, Parquet t
 
 See [the inference contract and deployment boundaries](docs/inference.md). The server binds only to loopback; it is a local research preview, not a public production API. Browser portraits require access to Valve's CDN. No game data or weights are uploaded by the demo.
 
+## Publish the Overview With GitHub Pages
+
+The public overview has a static build that requires neither PyTorch nor model
+weights. It reads the committed `reports/results.json` directly and uses
+relative URLs so repository-name subpaths work correctly:
+
+```bash
+python -m scripts.build_pages
+```
+
+The output is `dist/pages/index.html` plus its allowlisted assets. Do not publish
+the repository root or `src/web/index.html`: the former can render this README
+through Jekyll, while the latter is the Python-backed sandbox rather than the
+project homepage.
+
+In the repository's **Settings > Pages > Build and deployment**, set **Source**
+to **GitHub Actions**. Commit/push the Pages workflow, then check the
+**Deploy research site to Pages** run in Actions. It publishes only `dist/pages`.
+The workflow can also be started with **Run workflow**. Subsequent changes to
+the site or public results on `main` trigger a new deployment automatically.
+
+The default project URL is `https://mikawu73.github.io/Dota2-BP-Predection/`.
+The public sandbox link opens local-running instructions, not a nonfunctional
+prediction UI. Live model inference still requires a separately hosted backend.
+See [GitHub Pages setup and troubleshooting](docs/github-pages.md).
+
 ## Project Layout
 
 | Path | Purpose |

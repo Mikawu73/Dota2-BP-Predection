@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local Sandbox | Dota 2 Draft Prediction</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./overview.css">
+</head>
+<body class="overview">
+  <header class="topbar">
+    <a class="brand" href="./"><div><strong>DOTA 2</strong><span>Draft Lab</span></div></a>
+    <nav aria-label="Primary navigation"><a href="./">Overview</a><a href="./sandbox.html" aria-current="page">Local sandbox</a></nav>
+  </header>
+  <main class="sandbox-help">
+    <p class="eyebrow">RESEARCH DEMO / LOCAL INFERENCE</p>
+    <h1>Draft sandbox</h1>
+    <p class="intro">The interactive sandbox runs locally with a Python service and a trained checkpoint. This GitHub Pages site publishes the dataset and experiment results only.</p>
+    <section class="overview-section">
+      <h2>Run from your local checkout</h2>
+      <pre><code>python -m pip install -e .
+python -m scripts.serve_demo --checkpoint PATH_TO_MODEL.pt</code></pre>
+      <p>The sandbox opens at <code>http://127.0.0.1:8765/sandbox</code> after the service starts. A compatible trained checkpoint is required; model weights are not included in the repository.</p>
+      <p>No live prediction service is connected to this public page. The local model predicts the next pick or ban, not match win probability.</p>
+    </section>
+    <div class="sandbox-help-links">
+      <a class="sandbox-link" href="./">Back to research overview</a>
+      <a href="https://github.com/Mikawu73/Dota2-BP-Predection/blob/main/docs/inference.md">Inference documentation</a>
+      <a href="https://github.com/Mikawu73/Dota2-BP-Predection">GitHub repository</a>
+    </div>
+  </main>
+</body>
+</html>

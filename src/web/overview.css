@@ -1,4 +1,8 @@
 .overview{background:#fafbfb}
+.overview main.sandbox-help{max-width:900px}
+.sandbox-help pre{padding:18px;background:#edf2ef;border:1px solid var(--line);border-radius:4px;overflow-x:auto;font-size:12px;line-height:1.8}
+.sandbox-help section p{font-size:13px;color:var(--muted);line-height:1.7;margin-top:16px;overflow-wrap:anywhere}
+.sandbox-help-links{display:flex;align-items:center;gap:20px;flex-wrap:wrap;font-size:12px}
 .overview .topbar nav{display:flex;align-items:stretch;gap:28px;margin-left:auto;height:100%}
 .overview .topbar nav a{display:flex;align-items:center;gap:6px;font-size:12px;border-bottom:2px solid transparent}
 .overview .topbar nav a[aria-current=page]{color:var(--teal);border-color:var(--teal)}
